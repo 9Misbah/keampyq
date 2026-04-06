@@ -1,0 +1,239 @@
+:root {
+  /* ========================================= */
+  /*  🎨 MODERN EXAM APP DESIGN TOKENS        */
+  /* ========================================= */
+  
+  /* Primary Brand Colors - Premium Purple */
+  /* --color-primary: #7c3aed; / * Violet 600 */
+  --color-primary: #6366f1; /* Indigo 500 - slightly softer */
+  --color-primary-soft: rgba(99, 102, 241, 0.1);
+  --color-primary-hover: #4f46e5;
+  
+  /* Background Colors */
+  --bg-app: #fcfaff;                /* Very soft purple-tinged white */
+  --bg-surface: #ffffff;            /* Pure white for cards */
+  --bg-secondary: #f1f5f9;
+  
+  /* Text Colors */
+  --text-main: #1e293b;             /* Slate 800 */
+  --text-muted: #64748b;            /* Slate 500 */
+  --text-inverse: #ffffff;
+  
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  
+  /* Modern Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02);
+  
+  /* Geometry */
+  --max-width-app: 600px;           /* Narrower for mobile-first feel */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================= */
+/*  BASE STYLES                              */
+/* ========================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ========================================= */
+/*  LAYOUT COMPONENTS                        */
+/* ========================================= */
+
+.app-container {
+  width: 100%;
+  max-width: var(--max-width-app);
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 1.5rem;
+  padding-bottom: 5rem; /* Space for fixed navigation if any */
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  transition: var(--transition-fast);
+}
+
+.card-interactive:active {
+  transform: scale(0.98);
+}
+
+/* ========================================= */
+/*  INTERFACE ELEMENTS                       */
+/* ========================================= */
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 7px 0 rgba(99, 102, 241, 0.3);
+}
+
+.btn-outline {
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* ========================================= */
+/*  QUIZ INTERFACE                           */
+/* ========================================= */
+
+.option-button {
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 2px solid #f1f5f9;
+  margin-bottom: 1rem;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.option-button:hover {
+  border-color: #e2e8f0;
+}
+
+.option-button.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.option-button.correct {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.option-button.wrong {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+/* ========================================= */
+/*  TABS                                     */
+/* ========================================= */
+
+.tabs-container {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+
+.tab-item.active {
+  background: white;
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ========================================= */
+/*  ANIMATIONS                               */
+/* ========================================= */
+
+.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Utilities */
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-8 { margin-bottom: 2rem; }
+.text-center { text-align: center; }
+.font-bold { font-weight: 700; }
+.flex-row { display: flex; align-items: center; gap: 0.75rem; }
+
