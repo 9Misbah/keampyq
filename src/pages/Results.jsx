@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { CheckCircle2, XCircle, Clock, Award, Home, ChevronDown, ChevronUp } from 'lucide-react';
+import Latex from '../components/Latex';
 
 export default function Results() {
   const { attemptId } = useParams();
@@ -85,21 +86,26 @@ export default function Results() {
             {attempts.map((attempt, i) => (
               <div key={attempt.id} className="card" style={{ borderLeft: `4px solid ${attempt.is_correct ? '#10b981' : '#ef4444'}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
-                  <p style={{ fontWeight: '600', fontSize: '1rem', flex: 1 }}>
-                    {i + 1}. {attempt.questions.question_text}
-                  </p>
+                  <div style={{ fontWeight: '600', fontSize: '1rem', flex: 1 }}>
+                    <div style={{ display: 'inline-flex', marginRight: '0.5rem' }}>{i + 1}.</div>
+                    <Latex style={{ display: 'inline' }}>{attempt.questions.question_text}</Latex>
+                  </div>
                   {attempt.is_correct ? <CheckCircle2 size={24} color="#10b981" /> : <XCircle size={24} color="#ef4444" />}
                 </div>
                 
                 <div style={{ padding: '1rem', background: '#f1f5f9', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }}>
                   <div style={{ marginBottom: '0.5rem' }}>
                     <span className="text-muted" style={{ fontSize: '0.875rem' }}>Your Answer: </span>
-                    <span style={{ fontWeight: '600', color: attempt.is_correct ? '#10b981' : '#ef4444' }}>{attempt.selected_answer || 'Skipped'}</span>
+                    <span style={{ fontWeight: '600', color: attempt.is_correct ? '#10b981' : '#ef4444' }}>
+                      <Latex style={{ display: 'inline-block' }}>{attempt.selected_answer || 'Skipped'}</Latex>
+                    </span>
                   </div>
                   {!attempt.is_correct && (
                     <div>
                       <span className="text-muted" style={{ fontSize: '0.875rem' }}>Correct: </span>
-                      <span style={{ fontWeight: '600', color: '#10b981' }}>{attempt.questions.correct_answer}</span>
+                      <span style={{ fontWeight: '600', color: '#10b981' }}>
+                        <Latex style={{ display: 'inline-block' }}>{attempt.questions.correct_answer}</Latex>
+                      </span>
                     </div>
                   )}
                 </div>
@@ -108,9 +114,9 @@ export default function Results() {
                   <div style={{ padding: '1rem', borderTop: '1px solid #f1f5f9' }}>
                     <p className="text-muted" style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Explanation</p>
                     {attempt.questions.explanation && (
-                      <p style={{ fontSize: '0.875rem', lineHeight: '1.6', marginBottom: attempt.questions.explanation_image_url ? '1rem' : 0 }}>
-                        {attempt.questions.explanation}
-                      </p>
+                      <div style={{ fontSize: '0.875rem', lineHeight: '1.6', marginBottom: attempt.questions.explanation_image_url ? '1rem' : 0 }}>
+                        <Latex>{attempt.questions.explanation}</Latex>
+                      </div>
                     )}
                     {attempt.questions.explanation_image_url && (
                       <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>

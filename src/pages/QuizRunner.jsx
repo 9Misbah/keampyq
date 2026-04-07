@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Timer, AlertCircle, ChevronLeft, ChevronRight, Check, X, ShieldAlert, ArrowLeft } from 'lucide-react';
+import Latex from '../components/Latex';
 
 export default function QuizRunner() {
   const { mode, id } = useParams();
@@ -212,8 +213,8 @@ export default function QuizRunner() {
 
       <main className="fade-enter-active" key={currentIndex} style={{ flex: 1 }}>
         <section className="mb-8">
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', lineHeight: '1.5', marginBottom: '2rem' }}>
-            {currentQ.question_text}
+          <h2 style={{ fontSize: '1.125rem', fontWeight: '600', lineHeight: '1.6', marginBottom: '2rem' }}>
+            <Latex>{currentQ.question_text}</Latex>
           </h2>
 
           {currentQ.image_url && (
@@ -259,7 +260,7 @@ export default function QuizRunner() {
                   }}>
                     {String.fromCharCode(65 + i)}
                   </div>
-                  <span style={{ flex: 1 }}>{opt}</span>
+                  <span style={{ flex: 1 }}><Latex>{opt}</Latex></span>
                   {isPractice && isSelected && status === 'correct' && <Check size={18} />}
                   {isPractice && isSelected && status === 'wrong' && <X size={18} />}
                 </button>
@@ -286,16 +287,14 @@ export default function QuizRunner() {
               }}>
                 Explanation
               </p>
-              {currentQ.explanation && (
-                <p style={{ 
+                <div style={{ 
                   fontSize: '0.925rem', 
                   lineHeight: '1.6', 
                   color: 'var(--text-main)',
                   marginBottom: currentQ.explanation_image_url ? '1.25rem' : 0 
                 }}>
-                  {currentQ.explanation}
-                </p>
-              )}
+                  <Latex>{currentQ.explanation}</Latex>
+                </div>
               {currentQ.explanation_image_url && (
                 <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
                   <img 
