@@ -19,7 +19,8 @@ export default function Results() {
             question_text,
             options,
             correct_answer,
-            explanation
+            explanation,
+            explanation_image_url
           )
         `)
         .eq('attempt_group_id', attemptId);
@@ -101,10 +102,23 @@ export default function Results() {
                   )}
                 </div>
                 
-                {attempt.questions.explanation && (
+                {(attempt.questions.explanation || attempt.questions.explanation_image_url) && (
                   <div style={{ padding: '1rem', borderTop: '1px solid #f1f5f9' }}>
                     <p className="text-muted" style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Explanation</p>
-                    <p style={{ fontSize: '0.875rem', lineHeight: '1.6' }}>{attempt.questions.explanation}</p>
+                    {attempt.questions.explanation && (
+                      <p style={{ fontSize: '0.875rem', lineHeight: '1.6', marginBottom: attempt.questions.explanation_image_url ? '1rem' : 0 }}>
+                        {attempt.questions.explanation}
+                      </p>
+                    )}
+                    {attempt.questions.explanation_image_url && (
+                      <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <img 
+                          src={attempt.questions.explanation_image_url} 
+                          alt="Explanation diagram" 
+                          style={{ maxWidth: '100%', display: 'block', margin: '0 auto', borderRadius: '4px' }} 
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

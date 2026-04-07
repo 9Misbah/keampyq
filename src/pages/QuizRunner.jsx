@@ -225,6 +225,47 @@ export default function QuizRunner() {
               );
             })}
           </div>
+
+          {isPractice && feedback[currentIndex] && (currentQ.explanation || currentQ.explanation_image_url) && (
+            <div className="fade-enter-active" style={{ 
+              marginTop: '2rem', 
+              padding: '1.5rem', 
+              background: 'var(--bg-surface)', 
+              borderRadius: 'var(--radius-md)', 
+              border: '1px solid rgba(0,0,0,0.05)',
+              boxShadow: 'var(--shadow-sm)' 
+            }}>
+              <p style={{ 
+                fontWeight: '700', 
+                fontSize: '0.75rem', 
+                textTransform: 'uppercase', 
+                color: 'var(--color-primary)', 
+                marginBottom: '0.75rem',
+                letterSpacing: '0.05em'
+              }}>
+                Explanation
+              </p>
+              {currentQ.explanation && (
+                <p style={{ 
+                  fontSize: '0.925rem', 
+                  lineHeight: '1.6', 
+                  color: 'var(--text-main)',
+                  marginBottom: currentQ.explanation_image_url ? '1.25rem' : 0 
+                }}>
+                  {currentQ.explanation}
+                </p>
+              )}
+              {currentQ.explanation_image_url && (
+                <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                  <img 
+                    src={currentQ.explanation_image_url} 
+                    alt="Explanation visualization" 
+                    style={{ maxWidth: '100%', borderRadius: '4px', display: 'block', margin: '0 auto' }} 
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </section>
       </main>
 

@@ -5,7 +5,7 @@ import { BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function ChapterPractice() {
   const navigate = useNavigate();
-  const [subjects] = useState(['Physics', 'Chemistry', 'Maths']);
+  const [subjects] = useState(['Physics', 'Chemistry', 'Mathematics']);
   const [chapters, setChapters] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('Physics');
   const [loading, setLoading] = useState(true);
