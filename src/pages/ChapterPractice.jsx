@@ -52,6 +52,134 @@ export default function ChapterPractice() {
         }
       }
 
+      // Define the custom order here. Add chapter names in the exact order you want them to appear.
+      const customChapterOrder = [
+        "Units and Measurements",
+        "Kinematics",
+        "Laws of Motion",
+        "Work, Energy and Power",
+        "Rotational Motion",
+        "Gravitation",
+        "Properties of Solids",
+        "Properties of Fluids",
+        "Thermal Properties of Matter",
+        "Thermodynamics",
+        "Oscillations",
+        "Waves",
+        "Electrostatics",
+        "Current Electricity",
+        "Magnetic Effects of Current and Magnetism",
+        "Electromagnetic Induction",
+        "Alternating Current",
+        "Electromagnetic Waves",
+        "Optics",
+        "Dual Nature of Matter and Radiation",
+        "Atoms and Nuclei",
+        "Electronic Devices",
+        "Communication Systems",
+        "Molecules",
+        "Atomic Structure",
+        "Classification of Elements and Periodicity in Properties",
+        "Chemical Bonding and Molecular Structure",
+        "States of Matter: Gases and Liquids",
+        "Thermodynamics",
+        "Equilibrium",
+        "Redox Reactions",
+        "Hydrogen",
+        "s-Block Elements",
+        "p-Block Elements",
+        "Organic Chemistry – Some Basic Principles and Techniques",
+        "Hydrocarbons",
+        "Environmental Chemistry",
+        "Solid State",
+        "Solutions",
+        "Electrochemistry",
+        "Chemical Kinetics",
+        "Surface Chemistry",
+        "General Principles and Processes of Isolation of Elements",
+        "p-Block Elements",
+        "d- and f-Block Elements",
+        "Coordination Compounds",
+        "Haloalkanes and Haloarenes",
+        "Alcohols, Phenols and Ethers",
+        "Aldehydes, Ketones and Carboxylic Acids",
+        "Organic Compounds Containing Nitrogen",
+        "Biomolecules",
+        "Polymers",
+        "Chemistry in Everyday Life",
+        "Dual Nature of Matter and Radiation",
+        "Atoms and Nuclei",
+        "Electronic Devices",
+        "Communication Systems",
+        "Molecules",
+        "Atomic Structure",
+        "Classification of Elements and Periodicity in Properties",
+        "Chemical Bonding and Molecular Structure",
+        "States of Matter: Gases and Liquids",
+        "Thermodynamics",
+        "Equilibrium",
+        "Redox Reactions",
+        "Hydrogen",
+        "s-Block Elements",
+        "p-Block Elements",
+        "Organic Chemistry – Some Basic Principles and Techniques",
+        "Hydrocarbons",
+        "Environmental Chemistry",
+        "Solid State",
+        "Solutions",
+        "Electrochemistry",
+        "Chemical Kinetics",
+        "Surface Chemistry",
+        "General Principles and Processes of Isolation of Elements",
+        "p-Block Elements",
+        "d- and f-Block Elements",
+        "Coordination Compounds",
+        "Haloalkanes and Haloarenes",
+        "Alcohols, Phenols and Ethers",
+        "Aldehydes, Ketones and Carboxylic Acids",
+        "Organic Compounds Containing Nitrogen",
+        "Biomolecules",
+        "Polymers",
+        "Chemistry in Everyday Life",
+        "Sets and Relations",
+        "Functions",
+        "Complex Numbers",
+        "Quadratic Equations",
+        "Sequences and Series",
+        "Permutations and Combinations",
+        "Mathematical Induction",
+        "Binomial Theorem",
+        "Trigonometry",
+        "Straight Lines",
+        "Circles",
+        "Conic Sections",
+        "Three Dimensional Geometry",
+        "Limits and Continuity",
+        "Differentiation",
+        "Application of Derivatives",
+        "Integration",
+        "Area Under Curves",
+        "Differential Equations",
+        "Vectors",
+        "Probability",
+        "Statistics",
+        "Mathematical Reasoning",
+        "Matrices and Determinants",
+        "Inverse Trigonometric Functions",
+        "Limits and Continuity",
+        "Differentiation",
+        "Application of Derivatives",
+        "Integration",
+        "Area Under Curves",
+        "Differential Equations",
+        "Vectors",
+        "Probability",
+        "Statistics",
+        "Mathematical Reasoning",
+        "Matrices and Determinants",
+        "Inverse Trigonometric Functions",
+      ];
+
       // 5. Compute progress per chapter
       const chaptersWithProgress = Object.keys(chapterMap).map(chapterName => {
         const { total, questionIds } = chapterMap[chapterName];
@@ -61,7 +189,17 @@ export default function ChapterPractice() {
         });
         const progress = total > 0 ? Math.round((attempted / total) * 100) : 0;
         return { name: chapterName, total, attempted, progress };
+      }).sort((a, b) => {
+        const indexA = customChapterOrder.indexOf(a.name);
+        const indexB = customChapterOrder.indexOf(b.name);
+
+        // If a chapter is not explicitly listed in customChapterOrder, put it at the bottom.
+        const finalA = indexA === -1 ? 9999 : indexA;
+        const finalB = indexB === -1 ? 9999 : indexB;
+
+        return finalA - finalB;
       });
+
 
       setChapters(chaptersWithProgress);
       setLoading(false);
@@ -110,16 +248,16 @@ export default function ChapterPractice() {
                 <h3 style={{ fontSize: '1.125rem', fontWeight: '600' }}>{chap.name}</h3>
                 {chap.progress === 100 && <CheckCircle2 size={18} color="var(--color-success)" />}
               </div>
-              
+
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
                   <span className="text-muted">Progress</span>
                   <span className="font-bold">{chap.progress}%</span>
                 </div>
                 <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
-                  <div style={{ 
-                    height: '100%', 
-                    background: 'var(--color-primary)', 
+                  <div style={{
+                    height: '100%',
+                    background: 'var(--color-primary)',
                     width: `${chap.progress}%`,
                     borderRadius: '10px',
                     transition: 'width 0.3s ease'
