@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Timer, AlertCircle, ChevronLeft, ChevronRight, Check, X, ShieldAlert } from 'lucide-react';
+import { Timer, AlertCircle, ChevronLeft, ChevronRight, Check, X, ShieldAlert, ArrowLeft } from 'lucide-react';
 
 export default function QuizRunner() {
   const { mode, id } = useParams();
@@ -16,14 +16,17 @@ export default function QuizRunner() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
+  const [timerPaused, setTimerPaused] = useState(false);
+  const [timesPerQuestion, setTimesPerQuestion] = useState({});
   const [attemptGroupId, setAttemptGroupId] = useState('');
   
   useEffect(() => {
+    if (timerPaused) return;
     const timer = setInterval(() => {
       setTimeTaken(prev => prev + 1);
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timerPaused]);
 
   useEffect(() => {
     async function getQuestions() {
@@ -52,18 +55,40 @@ export default function QuizRunner() {
     
     if (isPractice) {
       setFeedback(prev => ({ ...prev, [currentIndex]: correct ? 'correct' : 'wrong' }));
+      setTimerPaused(true);
+      // Save this question's time
+      setTimesPerQuestion(prev => ({ ...prev, [currentIndex]: (prev[currentIndex] || 0) + timeTaken }));
     }
   };
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
+      // Save time for current question if not yet answered (exam mode)
+      if (!isPractice) {
+        setTimesPerQuestion(prev => ({ ...prev, [currentIndex]: (prev[currentIndex] || 0) + timeTaken }));
+      }
       setCurrentIndex(prev => prev + 1);
+      setTimeTaken(0); // Reset timer for next question
+      if (isPractice && !selectedAnswers[currentIndex + 1]) {
+        setTimerPaused(false);
+      } else if (isPractice) {
+        setTimerPaused(true);
+      }
     }
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
+      if (!isPractice) {
+        setTimesPerQuestion(prev => ({ ...prev, [currentIndex]: (prev[currentIndex] || 0) + timeTaken }));
+      }
       setCurrentIndex(prev => prev - 1);
+      setTimeTaken(0); // Reset timer for prev question
+      if (isPractice && selectedAnswers[currentIndex - 1]) {
+        setTimerPaused(true);
+      } else if (isPractice) {
+        setTimerPaused(false);
+      }
     }
   };
 
@@ -76,12 +101,12 @@ export default function QuizRunner() {
       question_id: q.id,
       selected_answer: selectedAnswers[idx] || null,
       is_correct: selectedAnswers[idx] === q.correct_answer,
-      time_taken: Math.floor(timeTaken / questions.length),
+      time_taken: timesPerQuestion[idx] || 0,
       attempt_group_id: attemptGroupId
     }));
 
     const { error } = await supabase.from('attempts').insert(attemptsDbPayload);
-    if (!error) navigate(`/results/${attemptGroupId}`);
+    if (!error) navigate(`/results/${attemptGroupId}?mode=${mode}`);
     else {
       alert('Failed to submit: ' + error.message);
       setSubmitting(false);
@@ -139,6 +164,22 @@ export default function QuizRunner() {
         border: '1px solid rgba(0,0,0,0.05)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button 
+            onClick={() => navigate(-1)} 
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer', 
+              padding: '4px', 
+              display: 'flex', 
+              alignItems: 'center',
+              color: 'var(--text-main)',
+              borderRadius: '6px'
+            }}
+            aria-label="Go back"
+          >
+            <ArrowLeft size={20} />
+          </button>
           <div className="icon-box" style={{ width: '32px', height: '32px', marginBottom: 0, borderRadius: '8px' }}>
             <Timer size={16} />
           </div>

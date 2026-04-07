@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, FileText, PlayCircle, ChevronRight } from 'lucide-react';
+import { BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -22,20 +22,6 @@ export default function Home() {
         <p className="text-muted mb-2">Welcome back,</p>
         <h1 className="font-bold" style={{ fontSize: '1.75rem' }}>Hi, {userName} 👋</h1>
       </header>
-
-      {/* Continue Practice - Conditional mockup */}
-      <section className="mb-8">
-        <Link to="/chapter" className="card card-interactive mb-4" style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--color-primary)', color: 'white', border: 'none' }}>
-          <div className="icon-box" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', marginBottom: 0 }}>
-            <PlayCircle size={24} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: '0.875rem', opacity: 0.9 }}>Continue Practice</p>
-            <h3 style={{ fontSize: '1.125rem' }}>Physics - Kinematics</h3>
-          </div>
-          <ChevronRight size={20} opacity={0.7} />
-        </Link>
-      </section>
 
       <section className="mb-8">
         <h2 className="mb-4 font-bold" style={{ fontSize: '1.25rem' }}>Start Learning</h2>
@@ -61,22 +47,6 @@ export default function Home() {
             </div>
             <ChevronRight size={20} color="var(--text-muted)" />
           </Link>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-4 font-bold" style={{ fontSize: '1.25rem' }}>Your Progress</h2>
-        <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-            <div>
-              <p className="text-muted" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Questions Solved</p>
-              <p className="font-bold" style={{ fontSize: '1.5rem' }}>124</p>
-            </div>
-            <div>
-              <p className="text-muted" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Success Rate</p>
-              <p className="font-bold" style={{ fontSize: '1.5rem', color: 'var(--color-success)' }}>78%</p>
-            </div>
-          </div>
         </div>
       </section>
     </div>

@@ -1,7 +1,7 @@
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
-import { LogOut, User, BookOpen, Calendar, Activity } from 'lucide-react';
+import { User, Activity, Home as HomeIcon } from 'lucide-react';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -30,10 +30,6 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
-  };
 
   // Hide nav during quiz or login
   const hideNav = location.pathname.startsWith('/quiz') || location.pathname === '/login' || !session;
@@ -59,12 +55,8 @@ function App() {
           </div>
           
           <div className="flex-row" style={{ gap: '1rem' }}>
-            <Link to="/chapter" style={{ color: 'var(--text-muted)' }}><BookOpen size={20} /></Link>
-            <Link to="/year" style={{ color: 'var(--text-muted)' }}><Calendar size={20} /></Link>
+            <Link to="/" style={{ color: 'var(--text-muted)' }}><HomeIcon size={20} /></Link>
             <Link to="/profile" style={{ color: 'var(--text-muted)' }}><User size={20} /></Link>
-            <button onClick={handleLogout} style={{ color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
-              <LogOut size={20} />
-            </button>
           </div>
         </nav>
       )}

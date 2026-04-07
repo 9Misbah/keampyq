@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { CheckCircle2, XCircle, Clock, Award, Home, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -8,6 +8,8 @@ export default function Results() {
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showReview, setShowReview] = useState(false);
+  const [searchParams] = useSearchParams();
+  const isPractice = searchParams.get('mode') === 'chapter';
 
   useEffect(() => {
     async function fetchResults() {
@@ -48,8 +50,8 @@ export default function Results() {
         <div className="icon-box" style={{ margin: '0 auto 1.5rem', width: '80px', height: '80px', borderRadius: '50%', background: 'var(--color-primary-soft)' }}>
           <Award size={40} />
         </div>
-        <h1 className="font-bold mb-2" style={{ fontSize: '2rem' }}>Exam Completed!</h1>
-        <p className="text-muted mb-8">Great effort! Here's how you performed.</p>
+        <h1 className="font-bold mb-2" style={{ fontSize: '2rem' }}>{isPractice ? 'Practice Completed!' : 'Exam Completed!'}</h1>
+        <p className="text-muted mb-8">{isPractice ? 'Nice work! Here\'s your practice summary.' : 'Great effort! Here\'s how you performed.'}</p>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
           <div className="card" style={{ background: '#f8fafc', border: 'none' }}>
