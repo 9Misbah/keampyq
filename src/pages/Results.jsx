@@ -65,13 +65,22 @@ export default function Results() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-          <Link to="/" className="btn-primary" style={{ flex: 1 }}>
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link to="/" className="btn-outline" style={{ flex: 1, minWidth: '120px' }}>
             <Home size={18} /> Home
           </Link>
+          {isPractice && (
+             <Link 
+              to={`/practice?subject=${encodeURIComponent(searchParams.get('subject') || 'Physics')}`} 
+              className="btn-primary" 
+              style={{ flex: 1, minWidth: '160px' }}
+            >
+              Back to Chapters
+            </Link>
+          )}
           <button 
             className="btn-outline" 
-            style={{ flex: 1 }}
+            style={{ flex: 1, minWidth: '120px' }}
             onClick={() => setShowReview(!showReview)}
           >
             Review {showReview ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

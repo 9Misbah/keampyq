@@ -20,6 +20,7 @@ export default function QuizRunner() {
   const [timerPaused, setTimerPaused] = useState(false);
   const [timesPerQuestion, setTimesPerQuestion] = useState({});
   const [attemptGroupId, setAttemptGroupId] = useState('');
+  const [subject, setSubject] = useState('');
   
   useEffect(() => {
     if (timerPaused) return;
@@ -37,9 +38,60 @@ export default function QuizRunner() {
       else if (mode === 'year') query = query.eq('year', parseInt(id));
       
       const { data } = await query;
-      if (data) {
+      if (data && data.length > 0) {
         setQuestions(data);
+        setSubject(data[0].subject);
         setAttemptGroupId(crypto.randomUUID ? crypto.randomUUID() : Math.random().toString());
+
+        // Restore past correct attempts for practice mode
+        if (mode === 'chapter') {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user && data.length > 0) {
+            const BATCH_SIZE = 200;
+            const qIds = data.map(q => q.id);
+            let allAttempts = [];
+            
+            for (let i = 0; i < qIds.length; i += BATCH_SIZE) {
+              const batchIds = qIds.slice(i, i + BATCH_SIZE);
+              const { data: attemptsData } = await supabase
+                .from('attempts')
+                .select('question_id, selected_answer')
+                .eq('user_id', user.id)
+                .eq('is_correct', true)
+                .in('question_id', batchIds);
+              if (attemptsData) {
+                allAttempts = [...allAttempts, ...attemptsData];
+              }
+            }
+
+            if (allAttempts.length > 0) {
+              const initialSelected = {};
+              const initialFeedback = {};
+              const correctIds = new Set();
+
+              allAttempts.forEach(attempt => {
+                const qIndex = data.findIndex(q => q.id === attempt.question_id);
+                if (qIndex !== -1) {
+                  initialSelected[qIndex] = attempt.selected_answer;
+                  initialFeedback[qIndex] = 'correct';
+                  correctIds.add(qIndex);
+                }
+              });
+
+              setSelectedAnswers(initialSelected);
+              setFeedback(initialFeedback);
+
+              let startIdx = 0;
+              for (let i = 0; i < data.length; i++) {
+                if (!correctIds.has(i)) {
+                  startIdx = i;
+                  break;
+                }
+              }
+              setCurrentIndex(startIdx);
+            }
+          }
+        }
       }
       setLoading(false);
     }
@@ -107,7 +159,7 @@ export default function QuizRunner() {
     }));
 
     const { error } = await supabase.from('attempts').insert(attemptsDbPayload);
-    if (!error) navigate(`/results/${attemptGroupId}?mode=${mode}`);
+    if (!error) navigate(`/results/${attemptGroupId}?mode=${mode}${subject ? `&subject=${encodeURIComponent(subject)}` : ''}`);
     else {
       alert('Failed to submit: ' + error.message);
       setSubmitting(false);
@@ -166,7 +218,13 @@ export default function QuizRunner() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <button 
-            onClick={() => navigate(-1)} 
+            onClick={() => {
+              if (isPractice && subject) {
+                navigate(`/practice?subject=${encodeURIComponent(subject)}`);
+              } else {
+                navigate(-1);
+              }
+            }} 
             style={{ 
               background: 'none', 
               border: 'none', 
@@ -207,8 +265,64 @@ export default function QuizRunner() {
         </div>
       </nav>
 
-      <div style={{ height: '4px', width: '100%', background: '#f1f5f9', borderRadius: '10px', marginBottom: '2rem', overflow: 'hidden' }}>
+      <div style={{ height: '4px', width: '100%', background: '#f1f5f9', borderRadius: '10px', marginBottom: '1rem', overflow: 'hidden' }}>
         <div style={{ height: '100%', background: isPractice ? 'var(--color-primary)' : '#ef4444', width: `${progressPercent}%`, transition: 'width 0.3s ease' }}></div>
+      </div>
+
+      {/* Question Palette */}
+      <div style={{
+        display: 'flex',
+        gap: '0.5rem',
+        overflowX: 'auto',
+        paddingBottom: '1rem',
+        marginBottom: '1rem',
+        scrollbarWidth: 'thin'
+      }}>
+        {questions.map((_, idx) => {
+          const isCurrent = idx === currentIndex;
+          const status = isPractice ? feedback[idx] : null;
+          let bgColor = '#f1f5f9';
+          let textColor = 'var(--text-main)';
+          let border = '1px solid transparent';
+          
+          if (isCurrent) {
+            border = `2px solid ${isPractice ? 'var(--color-primary)' : '#ef4444'}`;
+            bgColor = 'var(--bg-surface)';
+          } else if (isPractice && status === 'correct') {
+            bgColor = 'var(--color-success)';
+            textColor = '#fff';
+          } else if (isPractice && status === 'wrong') {
+            bgColor = 'var(--color-error)';
+            textColor = '#fff';
+          } else if (!isPractice && selectedAnswers[idx]) {
+            bgColor = 'var(--color-primary)';
+            textColor = '#fff';
+          }
+
+          return (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
+              style={{
+                minWidth: '40px',
+                height: '40px',
+                borderRadius: '8px',
+                background: bgColor,
+                color: textColor,
+                border: border,
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {idx + 1}
+            </button>
+          );
+        })}
       </div>
 
       <main className="fade-enter-active" key={currentIndex} style={{ flex: 1 }}>

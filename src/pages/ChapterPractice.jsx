@@ -1,14 +1,29 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function ChapterPractice() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [subjects] = useState(['Physics', 'Chemistry', 'Mathematics']);
   const [chapters, setChapters] = useState([]); // Array of { name, total, attempted, progress }
-  const [selectedSubject, setSelectedSubject] = useState('Physics');
+  const initialSubject = searchParams.get('subject') || 'Physics';
+  const [selectedSubject, setSelectedSubject] = useState(initialSubject);
   const [loading, setLoading] = useState(true);
+
+  // Sync state with URL when it changes (e.g. browser back button)
+  useEffect(() => {
+    const sub = searchParams.get('subject');
+    if (sub && sub !== selectedSubject) {
+      setSelectedSubject(sub);
+    }
+  }, [searchParams]);
+
+  const handleSubjectChange = (sub) => {
+    setSelectedSubject(sub);
+    setSearchParams({ subject: sub });
+  };
 
   useEffect(() => {
     async function fetchChaptersWithProgress() {
@@ -45,7 +60,8 @@ export default function ChapterPractice() {
         const { data: attemptsData } = await supabase
           .from('attempts')
           .select('question_id')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .eq('is_correct', true);
 
         if (attemptsData) {
           attemptsData.forEach(a => attemptedQuestionIds.add(a.question_id));
@@ -186,7 +202,7 @@ export default function ChapterPractice() {
           <button
             key={sub}
             className={`tab-item ${selectedSubject === sub ? 'active' : ''}`}
-            onClick={() => setSelectedSubject(sub)}
+            onClick={() => handleSubjectChange(sub)}
           >
             {sub}
           </button>
